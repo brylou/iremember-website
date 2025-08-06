@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Virtual Cemetery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    input, textarea {
+      padding: 10px;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+
+    .cemetery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .tombstone {
+      background: #fff;
+      border: 2px solid #aaa;
+      border-radius: 8px;
+      width: 200px;
+      padding: 15px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .tombstone h3 {
+      margin: 0 0 10px;
+    }
+
+    .tombstone p {
+      font-style: italic;
+    }
+
+    .remove-btn {
+      margin-top: 10px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌹 Virtual Cemetery 🌹</h1>
+
+  <form id="addForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <textarea id="epitaph" placeholder="Epitaph" rows="2" required></textarea>
+    <button type="submit">Add Memorial</button>
+  </form>
+
+  <div class="cemetery" id="cemetery"></div>
+
+  <script>
+    const form = document.getElementById('addForm');
+    const cemeteryDiv = document.getElementById('cemetery');
+
+    let graves = JSON.parse(localStorage.getItem('graves')) || [];
+
+    function renderGraves() {
+      cemeteryDiv.innerHTML = '';
+      graves.forEach((grave, index) => {
+        const div = document.createElement('div');
+        div.className = 'tombstone';
+        div.innerHTML = `
+          <h3>🪦 ${grave.name}</h3>
+          <p>"${grave.epitaph}"</p>
+          <button class="remove-btn" onclick="removeGrave(${index})">Remove</button>
+        `;
+        cemeteryDiv.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const epitaph = document.getElementById('epitaph').value.trim();
+      if (name && epitaph) {
+        graves.push({ name, epitaph });
+        localStorage.setItem('graves', JSON.stringify(graves));
+        renderGraves();
+        form.reset();
+      }
+    });
+
+    function removeGrave(index) {
+      graves.splice(index, 1);
+      localStorage.setItem('graves', JSON.stringify(graves));
+      renderGraves();
+    }
+
+    // Initial render
+    renderGraves();
+  </script>
+
+</body>
+</html>
